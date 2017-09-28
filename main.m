@@ -9,4 +9,4 @@ im = imread(path);
 im = imresize(im,[64 128]);                % Redimencionamento da imagem
 im = rgb2gray(im);
 
-HogCompute(im,[8 8],9);
+HogCompute(im,[8 8],9,0);

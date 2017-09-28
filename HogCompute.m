@@ -1,4 +1,4 @@
-function [descriptor] = HogCompute(image,cellSize,bins)
+function [descriptor] = HogCompute(image,cellSize,bins, signedUnsigned)
 
 %% Getting magnitude and direction of the gradients
 
@@ -9,15 +9,9 @@ theta(theta<0) = theta(theta<0)+(180);
 
 %% Gettings the cells
 
-%cellsInX = cellSize(1):cellSize(1):size(image,1);
-%cellsInY = cellSize(2):cellSize(2):size(image,2);
-
 cellsInX = numel(cellSize(1):cellSize(1):size(image,1));
 cellsInY = numel(cellSize(2):cellSize(2):size(image,2));
 totalCells = cellsInX*cellsInY;
-
-%cellsMagnitude = zeros(cellSize(1),cellSize(2),length(cellsInX)*length(cellsInY));
-%cellsDirection = zeros(cellSize(1),cellSize(2),length(cellsInX)*length(cellsInY));
 
 cellsMagnitude = zeros(cellSize(1),cellSize(2),totalCells);
 cellsDirection = zeros(cellSize(1),cellSize(2),totalCells);
@@ -31,27 +25,14 @@ for x = 1:cellSize(1):size(image,1)
     end
 end
 
-% beginX = 1;
-% beginY = 1;
-% cell = 1;
-% 
-% for x = 1:length(cellsInX)
-%     for y = 1:length(cellsInY)
-%        cellsMagnitude(:,:,cell) = rho(beginX:cellsInX(x),beginY:cellsInY(y));
-%        cellsDirection(:,:,cell) = theta(beginX:cellsInX(x),beginY:cellsInY(y));
-%        if(y ~= length(cellsInY))
-%            beginY = cellsInY(y)+1;
-%        end
-%        cell = cell + 1;
-%     end
-%     if(x ~= length(cellsInX))
-%         beginX = cellsInX(x)+1;
-%     end
-%     beginY = 1;
-% end
-
 %% Getting the histograms
-base = 0:20:160;
+
+if(signedUnsigned)
+    base = 0:40:320; %signed
+else
+    base = 0:20:160; %unsigned
+end    
+    
 hist = zeros(totalCells,bins);
 histaux = zeros(totalCells,bins);
 
@@ -97,6 +78,7 @@ for cell = 1:totalCells
 end
 
 %% Mounting the descriptor
+
 descriptor = [];
 
 aux = 1;
