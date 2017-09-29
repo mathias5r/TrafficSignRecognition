@@ -34,43 +34,40 @@ else
 end    
     
 hist = zeros(totalCells,bins);
-histaux = zeros(totalCells,bins);
 
-for cell = 1:totalCells
+for c = 1:totalCells
     for x = 1:cellSize(1)
        for y = 1:cellSize(1)
-           pos = ismember(base,cellsDirection(x,y,cell)); 
+           pos = ismember(base,cellsDirection(x,y,c)); 
            if any(pos)
-               pos = pos*cellsMagnitude(x,y,cell);
-               hist(cell,:) = hist(cell,:) + pos;
+               pos = pos*cellsMagnitude(x,y,c);
+               hist(c,:) = hist(c,:) + pos;
            else
-               d = cellsDirection(x,y,cell);
-               value = cellsMagnitude(x,y,cell)/2;
+               d = cellsDirection(x,y,c);
+               value = cellsMagnitude(x,y,c)/2;
                switch logical(true)
                    case d > base(1) & d < base(2)
-                       hist(cell,1) = hist(cell,1) + value;
-                       hist(cell,2) = hist(cell,2) + value;
+                       [hist(c,1),hist(c,2)] = balance(base(1),base(2),value);
                    case d > base(2) & d < base(3)
-                       hist(cell,2) = hist(cell,2) + value;
-                       hist(cell,3) = hist(cell,3) + value;
+                       [hist(c,2),hist(c,3)] = balance(base(2),base(3),value);
+                   case d > base(3) & d < base(4)
+                       [hist(c,3),hist(c,4)] = balance(base(3),base(4),value);
                    case d > base(4) & d < base(5)
-                       hist(cell,4) = hist(cell,4) + value;
-                       hist(cell,5) = hist(cell,5) + value;
+                       [hist(c,4),hist(c,5)] = balance(base(4),base(5),value);
                    case d > base(5) & d < base(6)
-                       hist(cell,5) = hist(cell,5) + value;
-                       hist(cell,6) = hist(cell,6) + value;
+                       [hist(c,5),hist(c,6)] = balance(base(5),base(6),value);
                    case d > base(6) & d < base(7)
-                       hist(cell,6) = hist(cell,6) + value;
-                       hist(cell,7) = hist(cell,7) + value;
+                       [hist(c,6),hist(c,7)] = balance(base(6),base(7),value);
                    case d > base(7) & d < base(8)
-                       hist(cell,7) = hist(cell,7) + value;
-                       hist(cell,8) = hist(cell,8) + value;
+                       [hist(c,7),hist(c,7)] = balance(base(7),base(8),value);
                    case d > base(8) & d < base(9)
-                       hist(cell,8) = hist(cell,8) + value;
-                       hist(cell,9) = hist(cell,9) + value;
+                       [hist(c,8),hist(c,9)] = balance(base(8),base(9),value);
                    otherwise
-                       hist(cell,9) = hist(cell,9) + value;
-                       hist(cell,1) = hist(cell,1) + value;
+                        if(signedUnsigned)
+                            [hist(c,9),hist(c,1)] = balance(base(9),base(1)+360,value);
+                        else
+                            [hist(c,9),hist(c,1)] = balance(base(9),base(1)+180,value);
+                        end
                end
            end
        end
@@ -80,8 +77,8 @@ end
 %% Mounting the descriptor
 
 descriptor = [];
-
 aux = 1;
+histaux = zeros( size(hist) );
 
 for k = 1:(totalCells)-17
     
@@ -191,5 +188,12 @@ function visualization = computeVisualization(image, histogram)
             cell = cell + 1;
         end
     end
+end
+
+function [valueInf, valueSup] = balance(inf, sup, value)
+    A = sup - value;
+    B = value - inf;
+    valueInf = A;
+    valueSup = B;
 end
 
