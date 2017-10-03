@@ -78,36 +78,30 @@ end
 
 descriptor = [];
 aux = 1;
-histaux = zeros( size(hist) );
+histaux = zeros(size(hist));
 
 for k = 1:(totalCells)-17
-    
     if(aux > 15)
         aux = 1;
         k = k +1;
         continue;
     end
-        
     normValue = norm([hist(k,:) ; hist(k+1,:) ; hist(k+16,:) ; hist(k+17,:)]);
-    
     if normValue ~= 0   
         histaux(k,:) = hist(k,:)/normValue;
         histaux(k+1,:) = hist(k+1,:)/normValue;
         histaux(k+16,:) = hist(k+16,:)/normValue;
         histaux(k+17,:) = hist(k+17,:)/normValue;
     end
-    
     descriptor = [descriptor ; histaux(k,:)' ; histaux(k+1,:)' ; histaux(k+16,:)' ; histaux(k+17,:)'];
-
     aux = aux + 1;
-    
 end
 
-computeVisualization(original,histaux);
+%computeVisualization(original,histaux);
 
 end
 
-
+%%
 function [rho,theta] = computeGradient(img)
 
     gx = zeros(size(img), 'like', img);
@@ -129,7 +123,7 @@ function [rho,theta] = computeGradient(img)
 
 end
 
-
+%%
 function visualization = computeVisualization(image, histogram)
   
     figure;
@@ -190,6 +184,7 @@ function visualization = computeVisualization(image, histogram)
     end
 end
 
+%%
 function [valueInf, valueSup] = balance(inf, sup, value)
     A = sup - value;
     B = value - inf;
