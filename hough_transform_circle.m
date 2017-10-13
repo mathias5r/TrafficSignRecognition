@@ -7,7 +7,7 @@ function [acummulator] = hough_transform_circle(img)
     for y = 1 : size(img,2);
         for x = 1 : size(img,1);
             if img(x,y) == 1
-                rectangle('Position',[y x 1 1],'EdgeColor','g');
+                %rectangle('Position',[y x 1 1],'EdgeColor','g');
                 for theta = 0:(1*pi)/180:2*pi
                     Xc = x - r*cos(theta);
                     Xc = round(Xc);
@@ -27,11 +27,11 @@ function [acummulator] = hough_transform_circle(img)
     end
     
    
-    [row,col] = find(acummulator == max(acummulator(:)))
+    [row,col] = find(acummulator == max(acummulator(:)));
     
-    for i=1:size(row)
-        plotCircle(col(i),row(i),r);
-    end
+%     for i=1:size(row)
+%         plotCircle(col(i),row(i),r);
+%     end
     
 end
 
