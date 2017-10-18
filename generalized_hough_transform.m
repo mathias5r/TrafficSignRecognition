@@ -8,7 +8,7 @@
 
 %% Inicialization 
 
-function [x,y] = generalized_hough_transform(image)
+function [x,y,s,name] = generalized_hough_transform(image)
 
 %% Get Image
 
@@ -25,16 +25,19 @@ function [x,y] = generalized_hough_transform(image)
        path = strcat('./Templates/',files(i).name);
        im = load(path);
        result = conv2(image,im.im,'same');
-       imshow(uint8(result));
-       if max(result(:)) > 200
+       %result = corrcoef(image,im.im);
+       %imshow(uint8(result));
+       if max(result(:)) > 100
             files(i).name
             [x,y] = find(result == max(result(:)));
+            s = str2num(files(i).name(end-5:end-4));
             return;
        end
     end
     
     x = -1;
     y = -1;
+    s = '';
     
 end
 

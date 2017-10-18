@@ -1,41 +1,75 @@
+% Limpeza das variáveis
 clear;
 close all;
 clc;
-
+ 
+% Caminho dos arquivos
 pwd = './German/';
 files = dir('./German/*.ppm');
 
-
 for i = 1:size(files,1)
 
-path = strcat(pwd,files(i).name);
-im = imread(path);
+    % Obtendo imagens 
+    path = strcat(pwd,files(i).name);
+    image = imread(path);
+    %imshow(image)
 
-% R = im(:,:,1)./(im(:,:,1)+im(:,:,2)+im(:,:,3));
-% G = im(:,:,2)./(im(:,:,1)+im(:,:,2)+im(:,:,3));
-% B = im(:,:,3)./(im(:,:,1)+im(:,:,2)+im(:,:,3));
+    % Conversão de RGB para HSV
+    HSVimage = rgb2hsv(image);
+        
+    % Binarização da Matiz
+    Hue = (HSVimage(:,:,1) >= 0.942) | (HSVimage(:,:,1) <= 0.085);
+    %imshow(Hue);
+    
+    % Binarização e Equalização da Saturação
+    HSVimage(:,:,2) = histeq(HSVimage(:,:,2));
+    Sat = (HSVimage(:,:,2)*255) > 200;
+    %imshow(Sat);
+    
+    % Matiz x Saturação
+    binarizedImage = Sat.*Hue;
+    %imshow(binarizedImage);
+
+    % Remoção de área muito pequenas ou muito grandes
+    lowerLimit = 1000;
+    higgerLimit = 7000;
+    sizeThreshold = bwareafilt(logical(binarizedImage),[lowerLimit higgerLimit]);
+    %imshow(sizeThreshold);
+    
+    % Dilatação das área restantes
+    dilatedAreas = imfill(sizeThreshold,'holes');
+    dilatedAreas = dilatedAreas > 0;
+    %imshow(dilatedAreas);
+    se = strel('disk',4,0);
+    dilatedAreas = imdilate(dilatedAreas,se);
+    %imshow(dilatedAreas);
+     
+    % Detecção de borda por Algoritmo Canny
+    boards = edge(dilatedAreas,'Canny');
+    %imshow(boards)
+    
+    
+%     stats = regionprops('table',boards,'Centroid',...
+%     'MajorAxisLength','MinorAxisLength');
 % 
-% im(:,:,1) = R*255;
-% im(:,:,2) = G*255;
-% im(:,:,3) = B*255;
+%     centers = stats.Centroid;
+%     diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
+%     radii = diameters/2;
+%     
+%     hold on;
+%     viscircles(centers,radii);
+%     hold off
 
-figure(1);
-imshow(im);
+    [x,y,s] = generalized_hough_transform(single(boards));
 
-im_hsv = rgb2hsv(im);
-binhue = (im_hsv(:,:,1) >= 0.942) | (im_hsv(:,:,1) <= 0.085);
-binsat = (im_hsv(:,:,2)*255) > 100;
-aux = binsat.*binhue;
-
-%%
-bigger = bwareafilt(logical(aux),[400 1000]);
-biggerA = imfill(bigger,'holes');
-biggerB = biggerA > 0;
-%%
-[rho,theta] = computeGradient(single(biggerB));
-figure(2);
-imshow(rho)
-%%
-% [x,y] = generalized_hough_transform(rho);
-
+    if(x(1) > 0 && y(1) > 0)
+        pointA = x(1) - round(s/2);
+        pointB = y(1) - round(s/2);
+        if(pointA > 0 && pointB > 0)
+            sign = image(pointA:pointA+s,pointB:pointB+s);
+            pwd2 = strcat('./Segmentation/',files(i).name(1:end-4),'.png');
+            imwrite(sign,pwd2);
+        end
+    end
+    
 end
