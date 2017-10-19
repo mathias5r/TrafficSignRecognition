@@ -7,7 +7,7 @@ clc;
 pwd = './German/';
 files = dir('./German/*.ppm');
 
-for i = 1:size(files,1)
+for i = 13:size(files,1)
 
     % Obtendo imagens 
     path = strcat(pwd,files(i).name);
@@ -31,8 +31,8 @@ for i = 1:size(files,1)
     %imshow(binarizedImage);
 
     % Remoção de área muito pequenas ou muito grandes
-    lowerLimit = 1000;
-    higgerLimit = 7000;
+    lowerLimit = 800;
+    higgerLimit = 8000;
     sizeThreshold = bwareafilt(logical(binarizedImage),[lowerLimit higgerLimit]);
     %imshow(sizeThreshold);
     
@@ -46,20 +46,24 @@ for i = 1:size(files,1)
      
     % Detecção de borda por Algoritmo Canny
     boards = edge(dilatedAreas,'Canny');
-    %imshow(boards)
+    %imshow(boards)   
     
-    
-%     stats = regionprops('table',boards,'Centroid',...
-%     'MajorAxisLength','MinorAxisLength');
-% 
-%     centers = stats.Centroid;
-%     diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
-%     radii = diameters/2;
-%     
-%     hold on;
-%     viscircles(centers,radii);
-%     hold off
+    stats = regionprops('table',boards,'Centroid',...
+    'MajorAxisLength','MinorAxisLength');
 
+    centers = stats.Centroid;
+    diameters = mean([stats.MajorAxisLength stats.MinorAxisLength],2);
+    radii = diameters/2;
+    
+    for j = 1:size(stats,1)
+        if radii(j) <= 25 || radii(j) >= 75
+            auxImage = createCircle([size(image,1) size(image,2)]...
+                                   ,centers(j,1),centers(j,2),radii(j));
+            boards = boards.*auxImage; 
+            %imshow(boards);
+        end
+    end
+    
     [x,y,s] = generalized_hough_transform(single(boards));
 
     if(x(1) > 0 && y(1) > 0)
