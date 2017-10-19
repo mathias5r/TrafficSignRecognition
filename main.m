@@ -66,6 +66,7 @@ for i = 13:size(files,1)
     
     [x,y,s] = generalized_hough_transform(single(boards));
 
+    sign = [];
     if(x(1) > 0 && y(1) > 0)
         pointA = x(1) - round(s/2);
         pointB = y(1) - round(s/2);
@@ -73,7 +74,17 @@ for i = 13:size(files,1)
             sign = image(pointA:pointA+s,pointB:pointB+s);
             pwd2 = strcat('./Segmentation/',files(i).name(1:end-4),'.png');
             imwrite(sign,pwd2);
+            
+            
+            teste = imread('teste.png');
+            teste = rgb2gray(teste);
+            teste = teste > 0;
+            teste = imresize(teste,[64 128]);
+            descriptor = HogCompute(teste,[8 8],9,0);
         end
     end
     
+    
+    
+      
 end

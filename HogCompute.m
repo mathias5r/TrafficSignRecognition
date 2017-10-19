@@ -44,29 +44,29 @@ for c = 1:totalCells
                hist(c,:) = hist(c,:) + pos;
            else
                d = cellsDirection(x,y,c);
-               value = cellsMagnitude(x,y,c)/2;
+               magnitude = cellsMagnitude(x,y,c);
                switch logical(true)
                    case d > base(1) & d < base(2)
-                       [hist(c,1),hist(c,2)] = balance(base(1),base(2),value);
+                       [hist(c,1),hist(c,2)] = balance(base(1),base(2),d,magnitude);
                    case d > base(2) & d < base(3)
-                       [hist(c,2),hist(c,3)] = balance(base(2),base(3),value);
+                       [hist(c,2),hist(c,3)] = balance(base(2),base(3),d,magnitude);
                    case d > base(3) & d < base(4)
-                       [hist(c,3),hist(c,4)] = balance(base(3),base(4),value);
+                       [hist(c,3),hist(c,4)] = balance(base(3),base(4),d,magnitude);
                    case d > base(4) & d < base(5)
-                       [hist(c,4),hist(c,5)] = balance(base(4),base(5),value);
+                       [hist(c,4),hist(c,5)] = balance(base(4),base(5),d,magnitude);
                    case d > base(5) & d < base(6)
-                       [hist(c,5),hist(c,6)] = balance(base(5),base(6),value);
+                       [hist(c,5),hist(c,6)] = balance(base(5),base(6),d,magnitude);
                    case d > base(6) & d < base(7)
-                       [hist(c,6),hist(c,7)] = balance(base(6),base(7),value);
+                       [hist(c,6),hist(c,7)] = balance(base(6),base(7),d,magnitude);
                    case d > base(7) & d < base(8)
-                       [hist(c,7),hist(c,7)] = balance(base(7),base(8),value);
+                       [hist(c,7),hist(c,7)] = balance(base(7),base(8),d,magnitude);
                    case d > base(8) & d < base(9)
-                       [hist(c,8),hist(c,9)] = balance(base(8),base(9),value);
+                       [hist(c,8),hist(c,9)] = balance(base(8),base(9),d,magnitude);
                    otherwise
                         if(signedUnsigned)
-                            [hist(c,9),hist(c,1)] = balance(base(9),base(1)+360,value);
+                            [hist(c,9),hist(c,1)] = balance(base(9),base(1)+360,d,magnitude);
                         else
-                            [hist(c,9),hist(c,1)] = balance(base(9),base(1)+180,value);
+                            [hist(c,9),hist(c,1)] = balance(base(9),base(1)+180,d,magnitude);
                         end
                end
            end
@@ -97,7 +97,7 @@ for k = 1:(totalCells)-17
     aux = aux + 1;
 end
 
-%computeVisualization(original,histaux);
+computeVisualization(original,histaux);
 
 end
 
@@ -155,8 +155,8 @@ function visualization = computeVisualization(image, histogram)
     for y=1:8
         for x=1:16
     
-            drawX = x * 8;
-            drawY = y * 8;
+            drawX = (x-1) * 8;
+            drawY = (y-1) * 8;
             
             mx = drawX + 8/2;
             my = drawY + 8/2;
@@ -185,10 +185,12 @@ function visualization = computeVisualization(image, histogram)
 end
 
 %%
-function [valueInf, valueSup] = balance(inf, sup, value)
-    A = sup - value;
-    B = value - inf;
-    valueInf = A;
-    valueSup = B;
+function [valueInf, valueSup] = balance(inf, sup,direction,magnitude)
+    A = sup - direction;
+    B = direction - inf;
+    A = ((A*100)/20)/100;
+    B = ((B*100)/20)/100;
+    valueInf = A*magnitude;
+    valueSup = B*magnitude;
 end
 
