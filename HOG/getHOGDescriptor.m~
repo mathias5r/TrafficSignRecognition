@@ -1,4 +1,4 @@
-function [descriptor, histogram] = getHOGDescriptor(image,cellSize,bins, signedUnsigned)
+function [descriptor] = getHOGDescriptor(image,cellSize,bins, signedUnsigned)
 
 %% Getting magnitude and direction of the gradients
 
@@ -96,8 +96,6 @@ for k = 1:(totalCells)-17
     descriptor = [descriptor ; histaux(k,:)' ; histaux(k+1,:)' ; histaux(k+16,:)' ; histaux(k+17,:)'];
     aux = aux + 1;
 end
-
-histogram = histaux;
 
 % Umcomment this to print the visualization of the descriptors over the
 % images

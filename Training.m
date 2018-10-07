@@ -32,7 +32,7 @@ for class = 1:size(trainingClasses,1)
         imageVector = imread(imagePath);                          
         imageResized = imresize(imageVector,[64 128]);               
         grayImage = rgb2gray(imageResized);                                                    
-        featureVector = getHOGDescriptor(grayImage,[8 8], 9, 0); 
+        [featureVector,~] = getHOGDescriptor(grayImage,[8 8], 9, 0); 
         descriptorsList(imageIndex,:) = featureVector;                 
         descriptorsLabels(imageIndex) = cellstr(images(imageIndex).name(end-4));
     end
