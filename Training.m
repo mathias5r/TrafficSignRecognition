@@ -14,8 +14,14 @@ addpath(genpath('./HOG/'));
 pathToStoreTrainedSVMs = '../../Results/TrainedSVMs/';
    			 
 trainingDatasetPath = './Dataset/Training/';
-trainingFolders = dir(trainingDatasetPath);
-trainingClasses = trainingFolders(3:end); % Removing '.' and '..' links 
+trainingClasses = dir(trainingDatasetPath);
+
+% Remove linux folders
+for j = size(trainingClasses):-1:1
+   if(strcmp(trainingClasses(j).name,'.') || strcmp(trainingClasses(j).name,'..'))
+    trainingClasses(j) = [];
+   end
+end
 
 HOGFeatureSize = getHOGDescriptorSize([64 128],8,16, 9);
 
