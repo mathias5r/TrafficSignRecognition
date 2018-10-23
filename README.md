@@ -36,6 +36,6 @@ All images have been taken from [GTSDB](http://benchmark.ini.rub.de/) and they a
 
 The test process is described in the image below.
 
-![test_process](Imgs/test_precss.png)
+![alt text](Imgs/test_precss.png)
 
 The test process will use the scripts contained in the folders called HOG, Preprocessing, Segmentation and Templates.
