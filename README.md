@@ -38,4 +38,10 @@ The test process is described in the image below.
 
 ![alt text](./Imgs/test_process.png)
 
-The test process will use the scripts contained in the folders called HOG, Preprocessing, Segmentation and Templates.
+The test process will use the scripts contained in the folders called HOG, Preprocessing, Segmentation and Templates. This process will generate the images of positive and negative segmented traffic sign in the path below:
+
+```
+./Results/Test
+```
+
+The recognition of all the segmented images with the svg will generate a **.dat** file for each SVM and the results folder. To run the test process, just execute de **main.m** file.
